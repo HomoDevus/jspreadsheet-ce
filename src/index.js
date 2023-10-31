@@ -334,8 +334,9 @@ if (! formula && typeof(require) === 'function') {
         obj.pageNumber = null;
         obj.headerContainer = null;
         obj.colgroupContainer = null;
+        obj.loadRowsAmount = 100;
 
-        // Containers
+      // Containers
         obj.headers = [];
         obj.records = [];
         obj.history = [];
@@ -797,6 +798,8 @@ if (! formula && typeof(require) === 'function') {
                     obj.records[cell[1]][cell[0]].classList.add(obj.options.classes[k[i]]);
                 }
             }
+
+            obj.loadRowsAmount = Math.ceil(obj.content.clientHeight / 2)
         }
 
         /**
@@ -905,9 +908,9 @@ if (! formula && typeof(require) === 'function') {
 
             // Lazy loading
             if (obj.options.lazyLoading == true) {
-                // Load only 100 records
+                // Load only obj.loadRowsAmount records
                 var startNumber = 0
-                var finalNumber = obj.options.data.length < 100 ? obj.options.data.length : 100;
+                var finalNumber = obj.options.data.length < obj.loadRowsAmount ? obj.options.data.length : obj.loadRowsAmount;
 
                 if (obj.options.pagination) {
                     obj.options.pagination = false;
@@ -5804,7 +5807,7 @@ if (! formula && typeof(require) === 'function') {
             }
 
             // Per page
-            var quantityPerPage = 100;
+            var quantityPerPage = obj.loadRowsAmount;
 
             // pageNumber
             if (pageNumber == null || pageNumber == -1) {
@@ -5817,7 +5820,7 @@ if (! formula && typeof(require) === 'function') {
             if (finalRow > results.length) {
                 finalRow = results.length;
             }
-            startRow = finalRow - 100;
+            startRow = finalRow - obj.loadRowsAmount;
             if (startRow < 0) {
                 startRow = 0;
             }
@@ -5844,7 +5847,7 @@ if (! formula && typeof(require) === 'function') {
                 var results = obj.rows;
             }
             var test = 0;
-            if (results.length > 100) {
+            if (results.length > obj.loadRowsAmount) {
                 // Get the first element in the page
                 var item = parseInt(obj.tbody.firstChild.getAttribute('data-y'));
                 if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
@@ -5859,7 +5862,7 @@ if (! formula && typeof(require) === 'function') {
                             } else {
                                 obj.tbody.insertBefore(obj.rows[item], obj.tbody.firstChild);
                             }
-                            if (obj.tbody.children.length > 100) {
+                            if (obj.tbody.children.length > obj.loadRowsAmount) {
                                 obj.tbody.removeChild(obj.tbody.lastChild);
                                 test = 1;
                             }
@@ -5878,7 +5881,7 @@ if (! formula && typeof(require) === 'function') {
                 var results = obj.rows;
             }
             var test = 0;
-            if (results.length > 100) {
+            if (results.length > obj.loadRowsAmount) {
                 // Get the last element in the page
                 var item = parseInt(obj.tbody.lastChild.getAttribute('data-y'));
                 if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
@@ -5892,7 +5895,7 @@ if (! formula && typeof(require) === 'function') {
                             } else {
                                 obj.tbody.appendChild(obj.rows[item]);
                             }
-                            if (obj.tbody.children.length > 100) {
+                            if (obj.tbody.children.length > obj.loadRowsAmount) {
                                 obj.tbody.removeChild(obj.tbody.firstChild);
                                 test = 1;
                             }
@@ -5907,9 +5910,9 @@ if (! formula && typeof(require) === 'function') {
 
         obj.loadValidation = function() {
             if (obj.selectedCell) {
-                var currentPage = parseInt(obj.tbody.firstChild.getAttribute('data-y')) / 100;
-                var selectedPage = parseInt(obj.selectedCell[3] / 100);
-                var totalPages = parseInt(obj.rows.length / 100);
+                var currentPage = parseInt(obj.tbody.firstChild.getAttribute('data-y')) / obj.loadRowsAmount;
+                var selectedPage = parseInt(obj.selectedCell[3] / obj.loadRowsAmount);
+                var totalPages = parseInt(obj.rows.length / obj.loadRowsAmount);
 
                 if (currentPage != selectedPage && selectedPage <= totalPages) {
                     if (! Array.prototype.indexOf.call(obj.tbody.children, obj.rows[obj.selectedCell[3]])) {
@@ -6000,7 +6003,7 @@ if (! formula && typeof(require) === 'function') {
 
             // Page 1
             if (obj.options.lazyLoading == true) {
-                total = 100;
+                total = obj.loadRowsAmount;
             } else if (obj.options.pagination > 0) {
                 total = obj.options.pagination;
             } else {
