@@ -334,7 +334,8 @@ if (! formula && typeof(require) === 'function') {
         obj.pageNumber = null;
         obj.headerContainer = null;
         obj.colgroupContainer = null;
-        obj.loadRowsAmount = 100;
+        obj.loadRowsAmount = 50;
+        obj.loadMoreSpacing = 36
 
       // Containers
         obj.headers = [];
@@ -799,7 +800,7 @@ if (! formula && typeof(require) === 'function') {
                 }
             }
 
-            obj.loadRowsAmount = Math.ceil(obj.content.clientHeight / 2)
+            obj.loadRowsAmount = Math.ceil(obj.content.clientHeight / 3)
         }
 
         /**
@@ -3280,11 +3281,11 @@ if (! formula && typeof(require) === 'function') {
             }
 
             // Top position check
-            if (y > (obj.content.scrollTop + 30) && y < (obj.content.scrollTop + h1)) {
+            if (y > (obj.content.scrollTop + obj.loadMoreSpacing) && y < (obj.content.scrollTop + h1)) {
                 // In the viewport
             } else {
                 // Out of viewport
-                if (y < obj.content.scrollTop + 30) {
+                if (y < obj.content.scrollTop + obj.loadMoreSpacing) {
                     obj.content.scrollTop = y - h2;
                 } else {
                     obj.content.scrollTop = y - (h1 - 2);
@@ -3299,7 +3300,7 @@ if (! formula && typeof(require) === 'function') {
                 // In the viewport
             } else {
                 // Out of viewport
-                if (x < obj.content.scrollLeft + 30) {
+                if (x < obj.content.scrollLeft + obj.loadMoreSpacing) {
                     obj.content.scrollLeft = x;
                     if (obj.content.scrollLeft < 50) {
                         obj.content.scrollLeft = 0;
@@ -5440,7 +5441,7 @@ if (! formula && typeof(require) === 'function') {
                         obj.updateSelectionFromCoords(obj.selectedCell[0], obj.selectedCell[1], obj.selectedCell[2], obj.selectedCell[3]);
                     } else {
                         var item = parseInt(obj.tbody.firstChild.getAttribute('data-y'));
-                        if (obj.selectedCell[1] - item < 30) {
+                        if (obj.selectedCell[1] - item < obj.loadMoreSpacing) {
                             obj.loadUp();
                             obj.updateSelectionFromCoords(obj.selectedCell[0], obj.selectedCell[1], obj.selectedCell[2], obj.selectedCell[3]);
                         }
@@ -5528,7 +5529,7 @@ if (! formula && typeof(require) === 'function') {
                         obj.updateSelectionFromCoords(obj.selectedCell[0], obj.selectedCell[1], obj.selectedCell[2], obj.selectedCell[3]);
                     } else {
                         var item = parseInt(obj.tbody.lastChild.getAttribute('data-y'));
-                        if (item - obj.selectedCell[3] < 30) {
+                        if (item - obj.selectedCell[3] < obj.loadMoreSpacing) {
                             obj.loadDown();
                             obj.updateSelectionFromCoords(obj.selectedCell[0], obj.selectedCell[1], obj.selectedCell[2], obj.selectedCell[3]);
                         }
@@ -5854,7 +5855,7 @@ if (! formula && typeof(require) === 'function') {
                     item = results.indexOf(item);
                 }
                 if (item > 0) {
-                    for (var j = 0; j < 30; j++) {
+                    for (var j = 0; j < obj.loadMoreSpacing; j++) {
                         item = item - 1;
                         if (item > -1) {
                             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
@@ -5881,14 +5882,14 @@ if (! formula && typeof(require) === 'function') {
                 var results = obj.rows;
             }
             var test = 0;
-            if (results.length > obj.loadRowsAmount) {
+            if (results.length > obj.loadRowsAmount || results.length > obj.tbody.children.length) {
                 // Get the last element in the page
                 var item = parseInt(obj.tbody.lastChild.getAttribute('data-y'));
                 if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                     item = results.indexOf(item);
                 }
                 if (item < obj.rows.length - 1) {
-                    for (var j = 0; j <= 30; j++) {
+                    for (var j = 0; j <= obj.loadMoreSpacing; j++) {
                         if (item < results.length) {
                             if ((obj.options.search == true || obj.options.filters == true) && obj.results) {
                                 obj.tbody.appendChild(obj.rows[results[item]]);
